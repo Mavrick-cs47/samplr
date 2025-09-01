@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRef, useState } from 'react'
+import { removeBackground } from '@imgly/background-removal'
 import { assets } from '../assets/assets'
 
 const Result = () => {
