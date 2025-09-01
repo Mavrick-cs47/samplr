@@ -1,6 +1,6 @@
 import React from 'react'
-import { useRef, useState } from 'react'
-import { removeBackground } from '@imgly/background-removal'
+import { useEffect, useRef, useState } from 'react'
+import imglyRemoveBackground, { preload } from '@imgly/background-removal'
 import { assets } from '../assets/assets'
 
 const Result = () => {
@@ -9,6 +9,14 @@ const Result = () => {
   const [outputSrc, setOutputSrc] = useState(assets.image_wo_bg)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    preload({
+      // Use CDN path to ensure assets load under dev server
+      publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/',
+    }).catch(() => {})
+  }, [])
 
   const handlePick = () => fileInputRef.current?.click()
 
@@ -21,15 +29,26 @@ const Result = () => {
     setLoading(true)
 
     try {
-      const resultBlob = await removeBackground(file, {
-        output: { format: 'image/png' },
-      })
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort('timeout'), 90000)
+      const resultBlob = await Promise.race([
+        imglyRemoveBackground(file, {
+          output: { format: 'image/png' },
+          progress: (_key, current, total) => {
+            if (total) setProgress(Math.round((current / total) * 100))
+          },
+          signal: controller.signal,
+          publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/',
+        }),
+      ])
+      clearTimeout(timeout)
       const url = URL.createObjectURL(resultBlob)
       setOutputSrc(url)
     } catch (err) {
-      setError(err.message || 'Background removal failed')
+      setError(typeof err === 'string' ? err : (err?.message || 'Background removal failed'))
     } finally {
       setLoading(false)
+      setProgress(0)
       e.target.value = ''
     }
   }
@@ -48,8 +67,9 @@ const Result = () => {
             <p className='font-semibold mb-2'>Background Removed</p>
             <div className='rounded-md border border-gray-300 h-full relative bg-layer overflow-hidden min-h-[200px] flex items-center justify-center'>
               {loading ? (
-                <div className='absolute right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-1/2'>
+                <div className='absolute right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-1/2 flex flex-col items-center gap-2'>
                   <div className='border-4 border-violet-600 rounded-full h-12 w-12 border-t-transparent animate-spin'></div>
+                  {progress > 0 && <p className='text-xs text-gray-600'>{progress}%</p>}
                 </div>
               ) : (
                 <img src={outputSrc} alt='' />
