@@ -21,20 +21,14 @@ const Result = () => {
     setLoading(true)
 
     try {
-      const formData = new FormData()
-      formData.append('image', file)
-      const res = await fetch('/api/remove-bg', { method: 'POST', body: formData })
-
-      const ct = res.headers.get('content-type') || ''
-      if (!res.ok || ct.includes('application/json')) {
-        const data = ct.includes('application/json') ? await res.json() : { error: 'Background removal failed' }
-        throw new Error(data.error || 'Background removal failed')
-      }
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
+      const resultBlob = await removeBackground(file, {
+        output: 'image', // png
+        format: 'image/png',
+      })
+      const url = URL.createObjectURL(resultBlob)
       setOutputSrc(url)
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Background removal failed')
     } finally {
       setLoading(false)
       e.target.value = ''
