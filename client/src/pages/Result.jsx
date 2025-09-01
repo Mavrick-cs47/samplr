@@ -22,8 +22,7 @@ const Result = () => {
 
     try {
       const resultBlob = await removeBackground(file, {
-        output: 'image', // png
-        format: 'image/png',
+        output: { format: 'image/png' },
       })
       const url = URL.createObjectURL(resultBlob)
       setOutputSrc(url)
