@@ -9,7 +9,7 @@ const Header = () => {
       {/**------------left side--------- */}
       <div >
         <h1 className='text-4xl:text-5xl 2xl:text-6xl font-bold text-neutral-800 leading-tight '>Remove the <br className='max-md:hidden' /> <span className='bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent '>background </span>from images <br className='max-md:hidden' /> for free.</h1>
-        <p className='my-6 text-[15px] text-gray-500'>Lorem ipsum dolor sit amet consectetur adipisicing elit. <br className='max-sm:hidden' />Autem, ad esse cumque iste animi qui expedita pariatur earum.</p>
+        <p className='my-6 text-[15px] text-gray-500'>Upload a photo and instantly get a clean, transparent background. Perfect for product shots, social posts, and profiles—no design skills required.</p>
         <div>
             <input type="file" name='' id='upload1' hidden />
             <button onClick={() => navigate('/result')} className='inline-flex gap-3 px-8 py-3.5 rounded-full cursor-pointer bg-gradient-to-r from-violet-600 to-blue-700 m-auto hover:scale-105 transition-all duration-700'>
