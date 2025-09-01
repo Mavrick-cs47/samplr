@@ -1,6 +1,8 @@
 import React from 'react'
-import { useEffect, useRef, useState } from 'react'
-import { removeBackground, preload } from '@imgly/background-removal'
+import { useRef, useState, useEffect } from 'react'
+import * as bodySeg from '@tensorflow-models/body-segmentation'
+import * as tf from '@tensorflow/tfjs-core'
+import '@tensorflow/tfjs-backend-webgl'
 import { assets } from '../assets/assets'
 
 const Result = () => {
