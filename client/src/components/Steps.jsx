@@ -36,7 +36,7 @@ const Steps = () => {
           <div className='bg-white border drop-shadow-md p-6 rounded hover:scale-105 transition-all duration-500 w-72 text-center'>
             <p className='text-xl font-semibold mb-2'>Download Image</p>
             <p className='text-sm text-neutral-500'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates.
+              Download a transparent PNG ready for marketplaces, edits, or sharing.
             </p>
           </div>
         </div>
