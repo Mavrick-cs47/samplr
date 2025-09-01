@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Result from './pages/Result';
 import BuyCredit from './pages/BuyCredit';
@@ -11,9 +11,11 @@ const App = () => {
     <div className='min-h-screen bg-gradient-to-br from-[#EDE8F5] to-[#7091E6]'>
       <Navbar />
       <Routes>
-        <Route path='/' element={<Home />} /> {/* Route for the home page */}
-        <Route path='/result' element={<Result />} /> {/* Route for the result page */}
-        <Route path='/buy' element={<BuyCredit />} /> {/* Route for the buy credit page */}
+        <Route path='/' element={<Home />} />
+        <Route path='/Home' element={<Home />} />
+        <Route path='/result' element={<Result />} />
+        <Route path='/buy' element={<BuyCredit />} />
+        <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>
       <Footer />
     </div>
