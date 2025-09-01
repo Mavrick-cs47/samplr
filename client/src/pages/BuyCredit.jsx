@@ -23,7 +23,7 @@ const BuyCredit = () => {
         return
       }
       await loadScript('https://checkout.razorpay.com/v1/checkout.js')
-      const res = await fetch('/api/payment/create-order', {
+      const res = await apiFetch('/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: plan.price * 100 }),
