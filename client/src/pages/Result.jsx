@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import imglyRemoveBackground, { preload } from '@imgly/background-removal'
+import { removeBackground, preload } from '@imgly/background-removal'
 import { assets } from '../assets/assets'
 
 const Result = () => {
@@ -29,19 +29,15 @@ const Result = () => {
     setLoading(true)
 
     try {
-      const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort('timeout'), 90000)
-      const resultBlob = await Promise.race([
-        imglyRemoveBackground(file, {
-          output: { format: 'image/png' },
-          progress: (_key, current, total) => {
-            if (total) setProgress(Math.round((current / total) * 100))
-          },
-          signal: controller.signal,
-          publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/',
-        }),
-      ])
-      clearTimeout(timeout)
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 90000))
+      const run = removeBackground(file, {
+        output: { format: 'image/png' },
+        progress: (_key, current, total) => {
+          if (total) setProgress(Math.round((current / total) * 100))
+        },
+        publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/',
+      })
+      const resultBlob = await Promise.race([run, timeoutPromise])
       const url = URL.createObjectURL(resultBlob)
       setOutputSrc(url)
     } catch (err) {
