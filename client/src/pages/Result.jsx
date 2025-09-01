@@ -1,8 +1,6 @@
 import React from 'react'
 import { useRef, useState, useEffect } from 'react'
-import * as bodySeg from '@tensorflow-models/body-segmentation'
-import * as tf from '@tensorflow/tfjs-core'
-import '@tensorflow/tfjs-backend-webgl'
+import { removeBackground, preload } from '@imgly/background-removal'
 import { assets } from '../assets/assets'
 
 const Result = () => {
@@ -13,10 +11,7 @@ const Result = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    (async () => {
-      await tf.setBackend('webgl')
-      await tf.ready()
-    })()
+    preload({ publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.5.1/dist/' }).catch(() => {})
   }, [])
 
   const handlePick = () => fileInputRef.current?.click()
@@ -30,36 +25,11 @@ const Result = () => {
     setLoading(true)
 
     try {
-      const imgBitmap = await createImageBitmap(file)
-      const segmenter = await bodySeg.createSegmenter(bodySeg.SupportedModels.MediaPipeSelfieSegmentation, {
-        runtime: 'mediapipe',
-        solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation',
-        modelType: 'general',
+      const resultBlob = await removeBackground(file, {
+        publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.5.1/dist/',
+        output: { format: 'image/png' },
       })
-      const people = await segmenter.segmentPeople(imgBitmap)
-      const mask = await bodySeg.toBinaryMask(people, {
-        foregroundThreshold: 0.6,
-        backgroundThreshold: 0.3,
-      })
-
-      const canvas = document.createElement('canvas')
-      canvas.width = imgBitmap.width
-      canvas.height = imgBitmap.height
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(imgBitmap, 0, 0)
-
-      const maskCanvas = document.createElement('canvas')
-      maskCanvas.width = mask.width
-      maskCanvas.height = mask.height
-      const maskCtx = maskCanvas.getContext('2d')
-      maskCtx.putImageData(mask, 0, 0)
-
-      ctx.globalCompositeOperation = 'destination-out'
-      ctx.drawImage(maskCanvas, 0, 0)
-      ctx.globalCompositeOperation = 'source-over'
-
-      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
-      const url = URL.createObjectURL(blob)
+      const url = URL.createObjectURL(resultBlob)
       setOutputSrc(url)
     } catch (err) {
       setError(typeof err === 'string' ? err : (err?.message || 'Background removal failed'))
