@@ -5,6 +5,8 @@ import Result from './pages/Result';
 import BuyCredit from './pages/BuyCredit';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
@@ -18,6 +20,7 @@ const App = () => {
         <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>
       <Footer />
+      <ToastContainer position="top-right" autoClose={2500} theme="light" />
     </div>
   );
 };
