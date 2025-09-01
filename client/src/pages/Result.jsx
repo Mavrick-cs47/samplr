@@ -11,7 +11,7 @@ const Result = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    preload({ publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.5.1/dist/' }).catch(() => {})
+    preload({ publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/' }).catch(() => {})
   }, [])
 
   const handlePick = () => fileInputRef.current?.click()
@@ -26,7 +26,7 @@ const Result = () => {
 
     try {
       const resultBlob = await removeBackground(file, {
-        publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.5.1/dist/',
+        publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/',
         output: { format: 'image/png' },
       })
       const url = URL.createObjectURL(resultBlob)
