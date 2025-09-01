@@ -2,9 +2,21 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
+import { ClerkProvider } from '@clerk/clerk-react';
 
-createRoot(document.getElementById('root')).render(
+const KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const ENABLE_CLERK = KEY && KEY !== 'pk_test_placeholder';
+
+const root = document.getElementById('root');
+
+createRoot(root).render(
   <BrowserRouter>
-    <App />
+    {ENABLE_CLERK ? (
+      <ClerkProvider publishableKey={KEY}>
+        <App />
+      </ClerkProvider>
+    ) : (
+      <App />
+    )}
   </BrowserRouter>
 );
