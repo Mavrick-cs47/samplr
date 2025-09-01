@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
 
 const Navbar = () => {
-  const ENABLE_CLERK = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && import.meta.env.VITE_CLERK_PUBLISHABLE_KEY !== 'pk_test_placeholder'
+  const KEY = (import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '').trim()
+  const ENABLE_CLERK = /^pk_(test|live)_[A-Za-z0-9]+$/.test(KEY)
 
   return (
     <div className='flex items-center justify-between mx-4 py-3 lg:mx-44'>
