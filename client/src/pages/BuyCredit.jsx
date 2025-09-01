@@ -40,7 +40,7 @@ const BuyCredit = () => {
         order_id: order.id,
         handler: async (response) => {
           try {
-            const verify = await fetch('/api/payment/verify', {
+            const verify = await apiFetch('/payment/verify', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
