@@ -11,13 +11,12 @@ const Result = () => {
   const [outputSrc, setOutputSrc] = useState(assets.image_wo_bg)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    preload({
-      // Use CDN path to ensure assets load under dev server
-      publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/',
-    }).catch(() => {})
+    (async () => {
+      await tf.setBackend('webgl')
+      await tf.ready()
+    })()
   }, [])
 
   const handlePick = () => fileInputRef.current?.click()
@@ -31,22 +30,41 @@ const Result = () => {
     setLoading(true)
 
     try {
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 90000))
-      const run = removeBackground(file, {
-        output: { format: 'image/png' },
-        progress: (_key, current, total) => {
-          if (total) setProgress(Math.round((current / total) * 100))
-        },
-        publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/',
+      const imgBitmap = await createImageBitmap(file)
+      const segmenter = await bodySeg.createSegmenter(bodySeg.SupportedModels.MediaPipeSelfieSegmentation, {
+        runtime: 'mediapipe',
+        solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation',
+        modelType: 'general',
       })
-      const resultBlob = await Promise.race([run, timeoutPromise])
-      const url = URL.createObjectURL(resultBlob)
+      const people = await segmenter.segmentPeople(imgBitmap)
+      const mask = await bodySeg.toBinaryMask(people, {
+        foregroundThreshold: 0.6,
+        backgroundThreshold: 0.3,
+      })
+
+      const canvas = document.createElement('canvas')
+      canvas.width = imgBitmap.width
+      canvas.height = imgBitmap.height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(imgBitmap, 0, 0)
+
+      const maskCanvas = document.createElement('canvas')
+      maskCanvas.width = mask.width
+      maskCanvas.height = mask.height
+      const maskCtx = maskCanvas.getContext('2d')
+      maskCtx.putImageData(mask, 0, 0)
+
+      ctx.globalCompositeOperation = 'destination-in'
+      ctx.drawImage(maskCanvas, 0, 0)
+      ctx.globalCompositeOperation = 'source-over'
+
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
+      const url = URL.createObjectURL(blob)
       setOutputSrc(url)
     } catch (err) {
       setError(typeof err === 'string' ? err : (err?.message || 'Background removal failed'))
     } finally {
       setLoading(false)
-      setProgress(0)
       e.target.value = ''
     }
   }
@@ -65,9 +83,8 @@ const Result = () => {
             <p className='font-semibold mb-2'>Background Removed</p>
             <div className='rounded-md border border-gray-300 h-full relative bg-layer overflow-hidden min-h-[200px] flex items-center justify-center'>
               {loading ? (
-                <div className='absolute right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-1/2 flex flex-col items-center gap-2'>
+                <div className='absolute right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-1/2'>
                   <div className='border-4 border-violet-600 rounded-full h-12 w-12 border-t-transparent animate-spin'></div>
-                  {progress > 0 && <p className='text-xs text-gray-600'>{progress}%</p>}
                 </div>
               ) : (
                 <img src={outputSrc} alt='' />
