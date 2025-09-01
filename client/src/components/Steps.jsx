@@ -16,7 +16,7 @@ const Steps = () => {
           <div className='bg-white border drop-shadow-md p-6 rounded hover:scale-105 transition-all duration-500 w-72 text-center'>
             <p className='text-xl font-semibold mb-2'>Upload Image</p>
             <p className='text-sm text-neutral-500'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates.
+              Choose any JPG or PNG up to a few MBs. We keep your image private in your browser.
             </p>
           </div>
         </div>
