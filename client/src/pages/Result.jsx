@@ -54,7 +54,7 @@ const Result = () => {
       const maskCtx = maskCanvas.getContext('2d')
       maskCtx.putImageData(mask, 0, 0)
 
-      ctx.globalCompositeOperation = 'destination-in'
+      ctx.globalCompositeOperation = 'destination-out'
       ctx.drawImage(maskCanvas, 0, 0)
       ctx.globalCompositeOperation = 'source-over'
 
