@@ -2,6 +2,7 @@ import React from 'react';
 import { assets, plans } from '../assets/assets';
 import { useCredits } from '../state/CreditsContext';
 import { toast } from 'react-toastify';
+import { apiFetch } from '../lib/api';
 
 const loadScript = (src) => new Promise((resolve, reject) => {
   const s = document.createElement('script')
