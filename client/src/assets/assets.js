@@ -16,7 +16,6 @@ import profile_img_2 from './profile_img_2.png'
 import credit_icon from './credit_icon.png'
 
 export const assets = {
-    logo,
     logo_icon,
     arrow_icon,
     header_img,

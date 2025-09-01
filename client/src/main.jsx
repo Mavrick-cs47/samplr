@@ -3,20 +3,25 @@ import './index.css';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
+import { CreditsProvider } from './state/CreditsContext.jsx'
 
-// Import your Publishable Key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const ENABLE_CLERK = KEY && KEY !== 'pk_test_placeholder';
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error('Missing Publishable Key')
-}
+const root = document.getElementById('root');
 
-createRoot(document.getElementById('root')).render(
+createRoot(root).render(
   <BrowserRouter>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <App />
-
-    </ClerkProvider>
-
+    {ENABLE_CLERK ? (
+      <ClerkProvider publishableKey={KEY}>
+        <CreditsProvider>
+          <App />
+        </CreditsProvider>
+      </ClerkProvider>
+    ) : (
+      <CreditsProvider>
+        <App />
+      </CreditsProvider>
+    )}
   </BrowserRouter>
 );
