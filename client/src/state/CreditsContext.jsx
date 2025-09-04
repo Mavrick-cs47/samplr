@@ -1,13 +1,11 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useUser } from '@clerk/clerk-react'
 
 const CreditsContext = createContext({ credits: 0, setCredits: () => {}, decrement: () => {} })
 
 const STORAGE_PREFIX = 'credits:'
 
 export const CreditsProvider = ({ children }) => {
-  const { isSignedIn, user } = useUser?.() || {}
-  const userKey = useMemo(() => `${STORAGE_PREFIX}${isSignedIn ? user?.id : 'guest'}`, [isSignedIn, user?.id])
+  const userKey = useMemo(() => `${STORAGE_PREFIX}guest`, [])
   const [credits, setCredits] = useState(0)
 
   // Initialize credits (10 free) per user
