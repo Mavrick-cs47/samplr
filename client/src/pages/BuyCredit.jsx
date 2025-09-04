@@ -2,6 +2,7 @@ import React from 'react';
 import { assets, plans } from '../assets/assets';
 import { useCredits } from '../state/CreditsContext';
 import { toast } from 'react-toastify';
+import { apiFetch } from '../lib/api';
 
 const loadScript = (src) => new Promise((resolve, reject) => {
   const s = document.createElement('script')
@@ -22,7 +23,7 @@ const BuyCredit = () => {
         return
       }
       await loadScript('https://checkout.razorpay.com/v1/checkout.js')
-      const res = await fetch('/api/payment/create-order', {
+      const res = await apiFetch('/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: plan.price * 100 }),
@@ -39,7 +40,7 @@ const BuyCredit = () => {
         order_id: order.id,
         handler: async (response) => {
           try {
-            const verify = await fetch('/api/payment/verify', {
+            const verify = await apiFetch('/payment/verify', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
