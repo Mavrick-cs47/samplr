@@ -6,7 +6,8 @@ import { ClerkProvider } from '@clerk/clerk-react';
 import { CreditsProvider } from './state/CreditsContext.jsx'
 
 const KEY = (import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '').trim();
-const ENABLE_CLERK = /^pk_(test|live)_[A-Za-z0-9]+$/.test(KEY);
+const DEMO = String(import.meta.env.VITE_CLERK_DEMO || '').toLowerCase() === 'true'
+const ENABLE_CLERK = (DEMO && KEY.length > 0) || /^pk_(test|live)_[A-Za-z0-9]+$/.test(KEY);
 
 const root = document.getElementById('root');
 
