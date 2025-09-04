@@ -1,5 +1,5 @@
 import logo from './logo.svg'
-import logo_icon from './logo_icon.svg'
+const logo_icon = 'https://cdn.builder.io/api/v1/image/assets%2F593ada92f6a849fdaf6600d87713b3e8%2F43744d75e0304b8cad78a6f1960257a2?format=webp&width=256'
 import arrow_icon from './arrow_icon.svg'
 import header_img from './header_img.png'
 import remove_bg_icon from './remove_bg_icon.svg'
